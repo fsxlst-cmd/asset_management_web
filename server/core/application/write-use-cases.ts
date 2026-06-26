@@ -1,6 +1,7 @@
 import { Money } from '../domain/money'
-import type { Account, AccountKind, ExpenseEntry, IncomeEntry, TransferEntry, Snapshot, Holding } from '../domain/entities'
+import type { Account, AccountKind, CategoryKind, ExpenseEntry, IncomeEntry, TransferEntry, Snapshot, Holding } from '../domain/entities'
 import type { UnitOfWork } from '../ports/unit-of-work'
+import type { Repositories } from '../ports/repositories'
 import type { Clock } from '../ports/clock'
 import type { IdGenerator } from '../ports/id-generator'
 import { NotFoundError, ValidationError } from './errors'
@@ -17,6 +18,18 @@ function assertPositive(amount: Money, label: string): void {
   if (!amount.isPositive()) {
     throw new ValidationError(`${label} must be a positive amount`)
   }
+}
+
+/**
+ * A category assigned to an income/expense entry must exist, match the entry kind,
+ * and be active (not archived). Enforced here so the rule lives in one place
+ * (transaction-categories spec).
+ */
+async function assertCategory(repos: Repositories, categoryId: string, kind: CategoryKind): Promise<void> {
+  const category = await repos.categories.getById(categoryId)
+  if (!category) throw new NotFoundError(`Category ${categoryId} not found`)
+  if (category.kind !== kind) throw new ValidationError(`"${category.name}" is not a ${kind} category`)
+  if (category.archivedAt) throw new ValidationError(`Category "${category.name}" is archived`)
 }
 
 // ── Create account ───────────────────────────────────────────────────────────
@@ -65,6 +78,7 @@ export class CreateAccount {
 export interface LogExpenseInput {
   amount: number
   envelopeId: string
+  categoryId: string
   sourceAccountId?: string
   date?: Date
   note?: string
@@ -81,6 +95,8 @@ export class LogExpense {
       const envelope = await repos.envelopes.getById(input.envelopeId)
       if (!envelope) throw new NotFoundError(`Budget ${input.envelopeId} not found`)
 
+      await assertCategory(repos, input.categoryId, 'expense')
+
       if (input.sourceAccountId) {
         const account = await repos.accounts.getById(input.sourceAccountId)
         if (!account) throw new NotFoundError(`Account ${input.sourceAccountId} not found`)
@@ -93,6 +109,7 @@ export class LogExpense {
         date: input.date ?? this.deps.clock.now(),
         note: input.note?.trim() || undefined,
         envelopeId: input.envelopeId,
+        categoryId: input.categoryId,
         sourceAccountId: input.sourceAccountId,
       }
       await repos.ledger.add(entry)
@@ -105,6 +122,7 @@ export class LogExpense {
 
 export interface LogIncomeInput {
   amount: number
+  categoryId: string
   destinationAccountId?: string
   date?: Date
   note?: string
@@ -118,6 +136,8 @@ export class LogIncome {
     assertPositive(amount, 'Income amount')
 
     return this.deps.uow.transaction(async (repos) => {
+      await assertCategory(repos, input.categoryId, 'income')
+
       if (input.destinationAccountId) {
         const account = await repos.accounts.getById(input.destinationAccountId)
         if (!account) throw new NotFoundError(`Account ${input.destinationAccountId} not found`)
@@ -128,6 +148,7 @@ export class LogIncome {
         amount,
         date: input.date ?? this.deps.clock.now(),
         note: input.note?.trim() || undefined,
+        categoryId: input.categoryId,
         destinationAccountId: input.destinationAccountId,
       }
       await repos.ledger.add(entry)

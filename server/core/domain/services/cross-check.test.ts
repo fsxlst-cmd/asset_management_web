@@ -8,10 +8,10 @@ const d = (iso: string) => new Date(iso)
 const rp = Money.fromRupiah
 
 function expense(id: string, amount: number, source?: string): ExpenseEntry {
-  return { id, type: 'expense', amount: rp(amount), date: d('2026-06-15'), envelopeId: 'daily', sourceAccountId: source }
+  return { id, type: 'expense', amount: rp(amount), date: d('2026-06-15'), envelopeId: 'daily', categoryId: 'food', sourceAccountId: source }
 }
 function income(id: string, amount: number): IncomeEntry {
-  return { id, type: 'income', amount: rp(amount), date: d('2026-06-15') }
+  return { id, type: 'income', amount: rp(amount), date: d('2026-06-15'), categoryId: 'salary' }
 }
 
 describe('cross-check', () => {

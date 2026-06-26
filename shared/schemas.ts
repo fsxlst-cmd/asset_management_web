@@ -25,6 +25,7 @@ export const createAccountSchema = z.object({
 export const logExpenseSchema = z.object({
   amount: positiveRupiah,
   envelopeId: z.string().min(1),
+  categoryId: z.string().min(1),
   sourceAccountId: z.string().min(1).optional(),
   date: isoDate,
   note,
@@ -32,6 +33,7 @@ export const logExpenseSchema = z.object({
 
 export const logIncomeSchema = z.object({
   amount: positiveRupiah,
+  categoryId: z.string().min(1),
   destinationAccountId: z.string().min(1).optional(),
   date: isoDate,
   note,
@@ -58,6 +60,26 @@ export const createEnvelopeSchema = z.object({
   accrual: z.object({ amount: positiveRupiah, period: accrualPeriod }).optional(),
 })
 
+export const categoryKind = z.enum(['income', 'expense'])
+
+export const createCategorySchema = z.object({
+  name: z.string().trim().min(1).max(80),
+  kind: categoryKind,
+})
+
+export const renameCategorySchema = z.object({
+  name: z.string().trim().min(1).max(80),
+})
+
+export const listCategoriesQuerySchema = z.object({
+  kind: categoryKind,
+  // Query strings arrive as text; accept the literal 'true' to include archived.
+  includeArchived: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => v === 'true'),
+})
+
 export const reconciliationSchema = z.object({
   balances: z
     .array(z.object({ holdingId: z.string().min(1), value: rupiah }))
@@ -76,3 +98,5 @@ export type LogIncomeBody = z.infer<typeof logIncomeSchema>
 export type RecordTransferBody = z.infer<typeof recordTransferSchema>
 export type ReconciliationBody = z.infer<typeof reconciliationSchema>
 export type CreateEnvelopeBody = z.infer<typeof createEnvelopeSchema>
+export type CreateCategoryBody = z.infer<typeof createCategorySchema>
+export type RenameCategoryBody = z.infer<typeof renameCategorySchema>

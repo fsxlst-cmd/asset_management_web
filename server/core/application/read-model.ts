@@ -39,7 +39,7 @@ export class ReadModel {
     private readonly clock: Clock,
   ) {}
 
-  private entryToDto(entry: LedgerEntry, envelopeName?: string): TransactionDto {
+  private entryToDto(entry: LedgerEntry, envelopeName?: string, categoryNames?: Map<string, string>): TransactionDto {
     const base: TransactionDto = {
       id: entry.id,
       type: entry.type,
@@ -48,12 +48,38 @@ export class ReadModel {
       note: entry.note,
     }
     if (entry.type === 'expense') {
-      return { ...base, envelopeId: entry.envelopeId, envelopeName, sourceAccountId: entry.sourceAccountId }
+      return {
+        ...base,
+        envelopeId: entry.envelopeId,
+        envelopeName,
+        categoryId: entry.categoryId,
+        categoryName: categoryNames?.get(entry.categoryId),
+        sourceAccountId: entry.sourceAccountId,
+      }
     }
     if (entry.type === 'income') {
-      return { ...base, destinationAccountId: entry.destinationAccountId }
+      return {
+        ...base,
+        categoryId: entry.categoryId,
+        categoryName: categoryNames?.get(entry.categoryId),
+        destinationAccountId: entry.destinationAccountId,
+      }
     }
     return { ...base, sourceAccountId: entry.sourceAccountId, destinationAccountId: entry.destinationAccountId }
+  }
+
+  /**
+   * id → name for categories (archived included, so old rows still render). Pass a
+   * single kind to skip fetching the other list when only one is needed (e.g. a
+   * budget's entries are all expenses); omit it to resolve both income and expense.
+   */
+  private async categoryNames(kind?: 'income' | 'expense'): Promise<Map<string, string>> {
+    const lists = await Promise.all(
+      (kind ? [kind] : (['income', 'expense'] as const)).map((k) =>
+        this.repos.categories.list(k, { includeArchived: true }),
+      ),
+    )
+    return new Map(lists.flat().map((c) => [c.id, c.name]))
   }
 
   private async accountDto(account: Account, allEntries: LedgerEntry[]): Promise<AccountDto> {
@@ -123,9 +149,10 @@ export class ReadModel {
     }
 
     const envelopesById = new Map(envelopes.map((e) => [e.id, e]))
+    const categoryNames = await this.categoryNames()
     const recent = (await this.repos.ledger.list()).slice(0, 5)
     const recentTransactions = recent.map((e) =>
-      this.entryToDto(e, e.type === 'expense' ? envelopesById.get(e.envelopeId)?.name : undefined),
+      this.entryToDto(e, e.type === 'expense' ? envelopesById.get(e.envelopeId)?.name : undefined, categoryNames),
     )
 
     return { netWorth, lastSnapshotAt, accounts, primaryEnvelope, recentTransactions }
@@ -162,8 +189,9 @@ export class ReadModel {
       .reduce((s, e) => s + Math.abs(entryEffect(e, accountId).toInt()), 0)
 
     const envelopes = new Map((await this.repos.envelopes.list()).map((e) => [e.id, e.name]))
+    const categoryNames = await this.categoryNames()
     const transactions = tagged.map((e) =>
-      this.entryToDto(e, e.type === 'expense' ? envelopes.get(e.envelopeId) : undefined),
+      this.entryToDto(e, e.type === 'expense' ? envelopes.get(e.envelopeId) : undefined, categoryNames),
     )
     return { account: dto, income, expense, transactions }
   }
@@ -185,9 +213,11 @@ export class ReadModel {
     if (!envelope) throw new NotFoundError(`Budget ${envelopeId} not found`)
     const entries = await this.repos.ledger.list({ envelopeId })
     const expenses = entries.filter((e): e is ExpenseEntry => e.type === 'expense')
+    // Entries here are all expenses (filtered by envelopeId), so only expense categories are needed.
+    const categoryNames = await this.categoryNames('expense')
     return {
       envelope: await this.envelopeDto(envelope, expenses),
-      transactions: entries.map((e) => this.entryToDto(e, envelope.name)),
+      transactions: entries.map((e) => this.entryToDto(e, envelope.name, categoryNames)),
     }
   }
 }

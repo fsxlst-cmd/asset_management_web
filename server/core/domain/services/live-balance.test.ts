@@ -6,10 +6,10 @@ import { liveBalance, entryEffectOnAccount, type SnapshotPoint } from './live-ba
 const d = (iso: string) => new Date(iso)
 
 function expense(id: string, amount: number, date: string, sourceAccountId?: string): ExpenseEntry {
-  return { id, type: 'expense', amount: Money.fromRupiah(amount), date: d(date), envelopeId: 'daily', sourceAccountId }
+  return { id, type: 'expense', amount: Money.fromRupiah(amount), date: d(date), envelopeId: 'daily', categoryId: 'food', sourceAccountId }
 }
 function income(id: string, amount: number, date: string, destinationAccountId?: string): IncomeEntry {
-  return { id, type: 'income', amount: Money.fromRupiah(amount), date: d(date), destinationAccountId }
+  return { id, type: 'income', amount: Money.fromRupiah(amount), date: d(date), categoryId: 'salary', destinationAccountId }
 }
 function transfer(id: string, amount: number, date: string, from: string, to: string): TransferEntry {
   return { id, type: 'transfer', amount: Money.fromRupiah(amount), date: d(date), sourceAccountId: from, destinationAccountId: to }

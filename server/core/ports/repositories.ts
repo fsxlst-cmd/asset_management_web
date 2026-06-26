@@ -1,6 +1,8 @@
 import type {
   Account,
   Asset,
+  Category,
+  CategoryKind,
   Envelope,
   Holding,
   LedgerEntry,
@@ -59,6 +61,22 @@ export interface EnvelopeRepository {
   delete(id: string): Promise<void>
 }
 
+export interface CategoryListOptions {
+  /** Include archived (soft-deleted) categories. Default false — pickers want only active. */
+  readonly includeArchived?: boolean
+}
+
+export interface CategoryRepository {
+  create(category: Category): Promise<void>
+  getById(id: string): Promise<Category | undefined>
+  /** Categories of one kind, optionally including archived ones. */
+  list(kind: CategoryKind, options?: CategoryListOptions): Promise<Category[]>
+  /** Rename a category, leaving kind and archived state untouched. */
+  rename(id: string, name: string): Promise<void>
+  /** Set or clear the archived timestamp (archive / restore). */
+  setArchived(id: string, archivedAt: Date | undefined): Promise<void>
+}
+
 export interface SnapshotRepository {
   add(snapshot: Snapshot): Promise<void>
   /** Most recent snapshot for a holding, optionally as-of a point in time. */
@@ -73,5 +91,6 @@ export interface Repositories {
   readonly holdings: HoldingRepository
   readonly ledger: LedgerRepository
   readonly envelopes: EnvelopeRepository
+  readonly categories: CategoryRepository
   readonly snapshots: SnapshotRepository
 }

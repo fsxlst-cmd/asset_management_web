@@ -59,16 +59,21 @@ interface LedgerEntryBase {
   readonly note?: string
 }
 
-/** Money out. Always assigned to exactly one budget; optionally tagged to a source account. */
+/**
+ * Money out. Always assigned to exactly one budget AND exactly one expense-kind
+ * category (two independent dimensions); optionally tagged to a source account.
+ */
 export interface ExpenseEntry extends LedgerEntryBase {
   readonly type: 'expense'
   readonly envelopeId: string
+  readonly categoryId: string
   readonly sourceAccountId?: string
 }
 
-/** Money in. Optionally tagged to a destination account. */
+/** Money in. Always assigned an income-kind category; optionally tagged to a destination account. */
 export interface IncomeEntry extends LedgerEntryBase {
   readonly type: 'income'
+  readonly categoryId: string
   readonly destinationAccountId?: string
 }
 
@@ -105,6 +110,25 @@ export interface Envelope {
   readonly name: string
   /** Optional — an envelope may exist without a recurring accrual. */
   readonly accrual?: AccrualRule
+}
+
+// ── Transaction categories ───────────────────────────────────────────────────
+
+export type CategoryKind = 'income' | 'expense'
+
+/**
+ * A user-managed classification label for income or expense entries. A second,
+ * independent dimension from the budget envelope. Plain label — no budget/target.
+ * Income and expense categories form two separate lists (never mixed) keyed by `kind`.
+ * Soft-deleted via `archivedAt`: an archived category is hidden from pickers but
+ * stays readable on records already tagged with it, and can be restored.
+ */
+export interface Category {
+  readonly id: string
+  readonly name: string
+  readonly kind: CategoryKind
+  /** When archived (soft-deleted); absent ⇒ active. */
+  readonly archivedAt?: Date
 }
 
 // ── Snapshots (reconciliation) ───────────────────────────────────────────────

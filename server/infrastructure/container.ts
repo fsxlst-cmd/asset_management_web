@@ -12,6 +12,13 @@ import {
 } from '@core/application/write-use-cases'
 import { EditAccrual } from '@core/application/edit-accrual'
 import { CreateEnvelope, DeleteEnvelope } from '@core/application/envelope-use-cases'
+import {
+  CreateCategory,
+  RenameCategory,
+  ArchiveCategory,
+  RestoreCategory,
+  ListCategories,
+} from '@core/application/category-use-cases'
 import { ReadModel } from '@core/application/read-model'
 import { RunCrossCheck } from '@core/application/run-cross-check'
 
@@ -36,6 +43,11 @@ function build() {
     editAccrual: new EditAccrual({ uow, clock: systemClock }),
     createEnvelope: new CreateEnvelope(deps),
     deleteEnvelope: new DeleteEnvelope({ uow }),
+    createCategory: new CreateCategory(deps),
+    renameCategory: new RenameCategory({ uow }),
+    archiveCategory: new ArchiveCategory({ uow, clock: systemClock }),
+    restoreCategory: new RestoreCategory({ uow }),
+    listCategories: new ListCategories(repos),
     read: new ReadModel(repos, systemClock),
     runCrossCheck: new RunCrossCheck(repos),
   }

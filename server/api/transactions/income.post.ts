@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
   return callUseCase(() =>
     useContainer().logIncome.execute({
       amount: body.amount,
+      categoryId: body.categoryId,
       destinationAccountId: body.destinationAccountId,
       date: body.date ? new Date(body.date) : undefined,
       note: body.note,

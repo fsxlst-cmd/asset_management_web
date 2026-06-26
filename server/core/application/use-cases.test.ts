@@ -23,6 +23,8 @@ describe('use-cases (in-memory)', () => {
   beforeEach(() => {
     db = new InMemoryDatabase()
     db.store.assets.push(cash)
+    // A required expense category, seeded so expense use-cases have one to tag.
+    db.store.categories.push({ id: 'food', name: 'Food', kind: 'expense' })
     clock = new FakeClock(new Date('2026-06-20T10:00:00Z'))
     deps = { uow: db.uow, clock, ids: new SequentialIds() }
   })
@@ -40,8 +42,8 @@ describe('use-cases (in-memory)', () => {
   })
 
   it('LogExpense requires an existing budget and rejects non-positive amounts', async () => {
-    await expect(new LogExpense(deps).execute({ amount: 0, envelopeId: 'daily' })).rejects.toThrow(/positive/)
-    await expect(new LogExpense(deps).execute({ amount: 1000, envelopeId: 'missing' })).rejects.toThrow(/not found/)
+    await expect(new LogExpense(deps).execute({ amount: 0, envelopeId: 'daily', categoryId: 'food' })).rejects.toThrow(/positive/)
+    await expect(new LogExpense(deps).execute({ amount: 1000, envelopeId: 'missing', categoryId: 'food' })).rejects.toThrow(/not found/)
   })
 
   it('RecordTransfer rejects same-account and moves balance without changing net worth', async () => {
@@ -97,7 +99,7 @@ describe('use-cases (in-memory)', () => {
 
   it('DeleteEnvelope refuses when expenses are charged to the budget', async () => {
     const { id } = await new CreateEnvelope(deps).execute({ name: 'Daily', accrual: { amount: 100_000, period: 'day' } })
-    await new LogExpense(deps).execute({ amount: 50_000, envelopeId: id })
+    await new LogExpense(deps).execute({ amount: 50_000, envelopeId: id, categoryId: 'food' })
 
     await expect(new DeleteEnvelope({ uow: db.uow }).execute(id)).rejects.toThrow(/charged/)
     expect(db.store.envelopes).toHaveLength(1) // still there
@@ -111,7 +113,7 @@ describe('use-cases (in-memory)', () => {
     db.store.envelopes.push(env)
 
     // Log only part of the real spending: 200k logged ...
-    await new LogExpense(deps).execute({ amount: 200_000, envelopeId: 'daily', date: new Date('2026-06-22T10:00:00Z') })
+    await new LogExpense(deps).execute({ amount: 200_000, envelopeId: 'daily', categoryId: 'food', date: new Date('2026-06-22T10:00:00Z') })
 
     // ... but the real balance fell by 350k. Reconcile to the real number a week later.
     clock.set(new Date('2026-06-27T10:00:00Z'))

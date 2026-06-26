@@ -1,10 +1,11 @@
-import { and, desc, eq, gte, lte } from 'drizzle-orm'
+import { and, asc, desc, eq, gte, isNull, lte } from 'drizzle-orm'
 import type { Db } from '../db/client'
-import { accounts, assets, envelopes, holdings, ledgerEntries, snapshots } from '../db/schema'
+import { accounts, assets, categories, envelopes, holdings, ledgerEntries, snapshots } from '../db/schema'
 import {
   fromLedgerEntry,
   toAccount,
   toAsset,
+  toCategory,
   toEnvelope,
   toHolding,
   toLedgerEntry,
@@ -13,6 +14,8 @@ import {
 import type {
   AccountRepository,
   AssetRepository,
+  CategoryListOptions,
+  CategoryRepository,
   EnvelopeRepository,
   HoldingRepository,
   LedgerFilter,
@@ -20,7 +23,7 @@ import type {
   Repositories,
   SnapshotRepository,
 } from '@core/ports/repositories'
-import type { Account, AccrualRule, Envelope, Holding, LedgerEntry, Snapshot } from '@core/domain/entities'
+import type { Account, AccrualRule, Category, CategoryKind, Envelope, Holding, LedgerEntry, Snapshot } from '@core/domain/entities'
 
 /**
  * Drizzle/SQLite implementations of the repository ports. All queries are
@@ -145,6 +148,38 @@ export function createRepositories(db: Db): Repositories {
     },
   }
 
+  const categoryRepo: CategoryRepository = {
+    async create(category: Category) {
+      db.insert(categories).values({
+        id: category.id,
+        name: category.name,
+        kind: category.kind,
+        archivedAt: category.archivedAt?.getTime() ?? null,
+      }).run()
+    },
+    async getById(id) {
+      const r = db.select().from(categories).where(eq(categories.id, id)).get()
+      return r ? toCategory(r) : undefined
+    },
+    async list(kind: CategoryKind, options?: CategoryListOptions) {
+      const conds = [eq(categories.kind, kind)]
+      if (!options?.includeArchived) conds.push(isNull(categories.archivedAt))
+      return db
+        .select()
+        .from(categories)
+        .where(and(...conds))
+        .orderBy(asc(categories.name))
+        .all()
+        .map(toCategory)
+    },
+    async rename(id: string, name: string) {
+      db.update(categories).set({ name }).where(eq(categories.id, id)).run()
+    },
+    async setArchived(id: string, archivedAt: Date | undefined) {
+      db.update(categories).set({ archivedAt: archivedAt?.getTime() ?? null }).where(eq(categories.id, id)).run()
+    },
+  }
+
   const snapshotRepo: SnapshotRepository = {
     async add(snapshot: Snapshot) {
       db.insert(snapshots).values({
@@ -179,6 +214,7 @@ export function createRepositories(db: Db): Repositories {
     holdings: holdingRepo,
     ledger: ledgerRepo,
     envelopes: envelopeRepo,
+    categories: categoryRepo,
     snapshots: snapshotRepo,
   }
 }

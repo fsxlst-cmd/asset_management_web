@@ -1,6 +1,8 @@
 import type {
   Account,
   Asset,
+  Category,
+  CategoryKind,
   Envelope,
   Holding,
   LedgerEntry,
@@ -10,6 +12,8 @@ import type {
 import type {
   AccountRepository,
   AssetRepository,
+  CategoryListOptions,
+  CategoryRepository,
   EnvelopeRepository,
   HoldingRepository,
   LedgerFilter,
@@ -31,11 +35,12 @@ interface Store {
   holdings: Holding[]
   ledger: LedgerEntry[]
   envelopes: Envelope[]
+  categories: Category[]
   snapshots: Snapshot[]
 }
 
 function emptyStore(): Store {
-  return { assets: [], accounts: [], holdings: [], ledger: [], envelopes: [], snapshots: [] }
+  return { assets: [], accounts: [], holdings: [], ledger: [], envelopes: [], categories: [], snapshots: [] }
 }
 
 function cloneStore(s: Store): Store {
@@ -46,6 +51,7 @@ function cloneStore(s: Store): Store {
     holdings: [...s.holdings],
     ledger: [...s.ledger],
     envelopes: [...s.envelopes],
+    categories: [...s.categories],
     snapshots: [...s.snapshots],
   }
 }
@@ -132,6 +138,28 @@ function makeRepositories(store: Store): Repositories {
     },
   }
 
+  const categories: CategoryRepository = {
+    async create(category) {
+      store.categories.push(category)
+    },
+    async getById(id) {
+      return store.categories.find((c) => c.id === id)
+    },
+    async list(kind: CategoryKind, options?: CategoryListOptions) {
+      return store.categories
+        .filter((c) => c.kind === kind && (options?.includeArchived || !c.archivedAt))
+        .sort((a, b) => a.name.localeCompare(b.name))
+    },
+    async rename(id: string, name: string) {
+      const idx = store.categories.findIndex((c) => c.id === id)
+      if (idx >= 0) store.categories[idx] = { ...store.categories[idx]!, name }
+    },
+    async setArchived(id: string, archivedAt: Date | undefined) {
+      const idx = store.categories.findIndex((c) => c.id === id)
+      if (idx >= 0) store.categories[idx] = { ...store.categories[idx]!, archivedAt }
+    },
+  }
+
   const snapshots: SnapshotRepository = {
     async add(snapshot) {
       store.snapshots.push(snapshot)
@@ -146,7 +174,7 @@ function makeRepositories(store: Store): Repositories {
     },
   }
 
-  return { assets, accounts, holdings, ledger, envelopes, snapshots }
+  return { assets, accounts, holdings, ledger, envelopes, categories, snapshots }
 }
 
 function taggedTo(entry: LedgerEntry, accountId: string): boolean {
