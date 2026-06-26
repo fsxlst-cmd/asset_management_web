@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Weekly Reconciliation | Finance Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#cbdbf5",
+                    "on-secondary-container": "#00714d",
+                    "on-secondary-fixed": "#002113",
+                    "secondary-fixed-dim": "#4edea3",
+                    "secondary-fixed": "#6ffbbe",
+                    "outline": "#777587",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#930013",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface": "#0b1c30",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#dad7ff",
+                    "on-surface-variant": "#464555",
+                    "on-background": "#0b1c30",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#d3e4fe",
+                    "surface": "#f8f9ff",
+                    "primary": "#3525cd",
+                    "inverse-primary": "#c3c0ff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-tertiary-container": "#ffd0cc",
+                    "primary-fixed": "#e2dfff",
+                    "secondary-container": "#6cf8bb",
+                    "secondary": "#006c49",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#213145",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "tertiary-container": "#bc1d25",
+                    "tertiary": "#960014",
+                    "primary-container": "#4f46e5",
+                    "surface-container": "#e5eeff",
+                    "on-primary-fixed": "#0f0069",
+                    "surface-tint": "#4d44e3",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "background": "#f8f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed": "#410004",
+                    "outline-variant": "#c7c4d8",
+                    "surface-bright": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#d3e4fe"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "24px",
+                    "base": "8px",
+                    "container-padding-desktop": "48px",
+                    "container-padding-mobile": "24px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "display-currency": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "display-currency-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-currency": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-currency-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9ff; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(241, 245, 249, 1); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .input-focus-ring:focus { outline: none; border-color: #3525cd; box-shadow: 0 0 0 3px rgba(53, 37, 205, 0.2); }
+        .reconciliation-gradient { background: linear-gradient(135deg, #4f46e5 0%, #3525cd 100%); }
+        .summary-entrance { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-32">
+<!-- Top Navigation Anchor -->
+<header class="w-full top-0 sticky z-40 bg-surface dark:bg-background flex justify-between items-center px-container-padding-mobile py-stack-md">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist portrait of a young professional woman with a soft bokeh background. The lighting is bright and natural, reflecting a high-end corporate lifestyle. The overall aesthetic is polished and trustworthy, consistent with a modern fintech application's premium user profile section." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDwCIKIXdNJel_0Rded4W1yvPagWXGJ1A7ZXRebNWH9UxMjVLnn1xUX399avF7woJ42BCEzP-yVDWe5-R75h90P36SD_IPxYGm_7IkWvUa4SJbywCTKFx4bX4tkw5itUpqgM-AOKZLA9tU-9YL5Un7bDA1LNuRKkA8miqkNLvjBPy9apxKXGsY9CGkhs3d04wti-aW7zkv6D8xXLv3FvemZRYhNIsdBhHHkgEBUO-b3e1SXDSQp6CDwkbdJRB2NHBu1TZw7UIWYHOA"/>
+</div>
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-primary">Finance Hub</h1>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-variant transition-colors p-2 rounded-full">settings</span>
+</div>
+</header>
+<main class="max-w-md mx-auto px-container-padding-mobile py-stack-lg">
+<!-- Headline -->
+<section class="mb-stack-lg">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Weekly check-in</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Let's ensure your digital records match your actual pockets.</p>
+</section>
+<!-- Dynamic Visualization (Atmospheric) -->
+<div class="relative h-32 w-full mb-stack-lg rounded-xl overflow-hidden shadow-sm">
+
+<div class="absolute inset-0 flex flex-col justify-center px-6 z-10">
+<span class="font-label-caps text-label-caps text-primary uppercase tracking-widest">Snapshot</span>
+<span class="font-headline-md text-headline-md text-on-surface">Period: Oct 14 — Oct 21</span>
+</div>
+</div>
+<!-- Account Reconciliation List -->
+<div class="space-y-stack-md">
+<!-- BCA Account Card -->
+<div class="glass-card p-stack-md rounded-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-blue-50 rounded-lg text-blue-600">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<p class="font-body-lg font-semibold text-on-surface">BCA</p>
+<p class="font-body-sm text-on-surface-variant italic">Savings • 8820</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">App Balance</p>
+<p class="font-body-lg font-bold text-primary">Rp 4.520.000</p>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">REAL BALANCE</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-sm">Rp</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl input-focus-ring font-body-lg text-on-surface transition-all" placeholder="0" type="text" value="4.500.000"/>
+</div>
+</div>
+</div>
+<!-- GoPay Account Card -->
+<div class="glass-card p-stack-md rounded-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-green-50 rounded-lg text-green-600">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</div>
+<div>
+<p class="font-body-lg font-semibold text-on-surface">GoPay</p>
+<p class="font-body-sm text-on-surface-variant italic">Digital Wallet</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">App Balance</p>
+<p class="font-body-lg font-bold text-primary">Rp 840.000</p>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">REAL BALANCE</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-sm">Rp</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl input-focus-ring font-body-lg text-on-surface transition-all" placeholder="0" type="text" value="640.000"/>
+</div>
+</div>
+</div>
+<!-- Cash Account Card -->
+<div class="glass-card p-stack-md rounded-xl shadow-sm transition-all hover:shadow-md">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<div class="p-2 bg-orange-50 rounded-lg text-orange-600">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div>
+<p class="font-body-lg font-semibold text-on-surface">Cash</p>
+<p class="font-body-sm text-on-surface-variant italic">Physical Pocket</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-label-caps text-label-caps text-on-surface-variant uppercase">App Balance</p>
+<p class="font-body-lg font-bold text-primary">Rp 120.000</p>
+</div>
+</div>
+<div class="space-y-2">
+<label class="font-label-caps text-label-caps text-on-surface-variant">REAL BALANCE</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-sm">Rp</span>
+<input class="w-full pl-12 pr-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl input-focus-ring font-body-lg text-on-surface transition-all" placeholder="0" type="text" value="120.000"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Section -->
+<div class="mt-stack-lg">
+<button class="w-full py-4 reconciliation-gradient text-white font-headline-md rounded-xl shadow-lg active:scale-[0.98] transition-transform flex items-center justify-center gap-2" id="calculateBtn">
+<span class="material-symbols-outlined">analytics</span>
+                Calculate Cross-check
+            </button>
+</div>
+<!-- Summary Insight Card (Shown after calculation, here static as per requirement) -->
+<div class="summary-entrance mt-stack-lg p-stack-md rounded-xl bg-primary-container text-on-primary-container border border-primary/20" id="summaryCard">
+<div class="flex items-start gap-4">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white">lightbulb</span>
+</div>
+<div>
+<h4 class="font-headline-md text-headline-md mb-2">Check-in Complete</h4>
+<p class="font-body-lg mb-4 leading-relaxed">
+                        Your net worth dropped <span class="font-bold">Rp 1.200.000</span>. You logged <span class="font-bold">Rp 980.000</span>. There's about <span class="font-bold underline decoration-white/40">~Rp 220.000</span> untracked this week.
+                    </p>
+<div class="flex gap-3">
+<button class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-label-caps text-label-caps transition-colors">ADD AS EXPENSE</button>
+<button class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-label-caps text-label-caps transition-colors">KEEP AS IS</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary Insights (Asymmetric Bento Style) -->
+<div class="grid grid-cols-2 gap-gutter mt-stack-lg">
+<div class="col-span-1 glass-card p-4 rounded-xl flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">LOGGING ACCURACY</p>
+<p class="font-headline-md text-headline-md text-secondary">82%</p>
+</div>
+</div>
+<div class="col-span-1 glass-card p-4 rounded-xl flex flex-col justify-between aspect-square">
+<span class="material-symbols-outlined text-tertiary">history</span>
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant">LAST CHECK</p>
+<p class="font-headline-md text-headline-md text-on-surface">7d ago</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Shell -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md shadow-lg rounded-t-xl border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-label-caps mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary relative after:content-[''] after:w-1 after:h-1 after:bg-primary after:rounded-full after:mt-1 active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">account_balance</span>
+<span class="font-label-caps text-label-caps mt-1">Accounts</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined text-3xl">add_circle</span>
+<span class="font-label-caps text-label-caps mt-1">Add</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">pie_chart</span>
+<span class="font-label-caps text-label-caps mt-1">Budgets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all active:scale-95 duration-200" href="#">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-label-caps text-label-caps mt-1">More</span>
+</a>
+</nav>
+<script>
+        document.getElementById('calculateBtn').addEventListener('click', function() {
+            const card = document.getElementById('summaryCard');
+            card.classList.remove('summary-entrance');
+            void card.offsetWidth; // Trigger reflow
+            card.classList.add('summary-entrance');
+            
+            // Interaction feedback
+            this.style.opacity = '0.7';
+            setTimeout(() => this.style.opacity = '1', 200);
+        });
+
+        // Simple numerical formatting for inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.parentElement.classList.add('scale-[1.02]');
+            });
+            input.addEventListener('blur', function() {
+                this.parentElement.parentElement</script></body></html>

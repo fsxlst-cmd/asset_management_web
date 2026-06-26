@@ -1,0 +1,1 @@
+ALTER TABLE `envelopes` ADD `accrual_baseline` integer;

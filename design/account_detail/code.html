@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Account Detail - BCA Utama</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#cbdbf5",
+                    "on-secondary-container": "#00714d",
+                    "on-secondary-fixed": "#002113",
+                    "secondary-fixed-dim": "#4edea3",
+                    "secondary-fixed": "#6ffbbe",
+                    "outline": "#777587",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#930013",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface": "#0b1c30",
+                    "tertiary-fixed-dim": "#ffb3ad",
+                    "on-error": "#ffffff",
+                    "on-primary-container": "#dad7ff",
+                    "on-surface-variant": "#464555",
+                    "on-background": "#0b1c30",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#d3e4fe",
+                    "surface": "#f8f9ff",
+                    "primary": "#3525cd",
+                    "inverse-primary": "#c3c0ff",
+                    "on-secondary-fixed-variant": "#005236",
+                    "on-tertiary-container": "#ffd0cc",
+                    "primary-fixed": "#e2dfff",
+                    "secondary-container": "#6cf8bb",
+                    "secondary": "#006c49",
+                    "tertiary-fixed": "#ffdad7",
+                    "on-primary": "#ffffff",
+                    "inverse-surface": "#213145",
+                    "primary-fixed-dim": "#c3c0ff",
+                    "tertiary-container": "#bc1d25",
+                    "tertiary": "#960014",
+                    "primary-container": "#4f46e5",
+                    "surface-container": "#e5eeff",
+                    "on-primary-fixed": "#0f0069",
+                    "surface-tint": "#4d44e3",
+                    "on-primary-fixed-variant": "#3323cc",
+                    "background": "#f8f9ff",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-low": "#eff4ff",
+                    "on-tertiary-fixed": "#410004",
+                    "outline-variant": "#c7c4d8",
+                    "surface-bright": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-error-container": "#93000a",
+                    "surface-container-highest": "#d3e4fe"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "24px",
+                    "base": "8px",
+                    "container-padding-desktop": "48px",
+                    "container-padding-mobile": "24px",
+                    "stack-sm": "8px",
+                    "stack-md": "16px",
+                    "gutter": "16px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "display-currency": ["Inter"],
+                    "label-caps": ["Inter"],
+                    "body-sm": ["Inter"],
+                    "display-currency-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "display-currency": ["40px", {"lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-currency-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid #F1F5F9;
+        }
+        .account-card-shadow {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .nav-active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            width: 4px;
+            height: 4px;
+            background-color: #3525cd;
+            border-radius: 50%;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-32">
+<!-- Top AppBar -->
+<header class="w-full top-0 sticky z-50 bg-surface dark:bg-background flex justify-between items-center px-container-padding-mobile py-stack-md w-full transition-all duration-300">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary cursor-pointer active:opacity-70" onclick="window.history.back()">arrow_back</button>
+<h1 class="font-headline-md text-headline-md-mobile font-bold text-primary dark:text-inverse-primary">BCA Utama</h1>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer active:opacity-70">settings</span>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-[10px]">UP</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-container-padding-mobile md:px-container-padding-desktop">
+<!-- Account Summary Hero Section -->
+<section class="mt-stack-lg">
+<div class="bg-surface-container-lowest rounded-xl p-stack-lg account-card-shadow border border-outline-variant relative overflow-hidden">
+<!-- Abstract Atmospheric Background Element -->
+<div class="absolute -right-12 -top-12 w-48 h-48 bg-primary/5 rounded-full blur-3xl"></div>
+<div class="flex flex-col gap-1 relative z-10">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<span class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest">Available Balance</span>
+</div>
+<div class="flex flex-wrap items-baseline gap-2 mt-2">
+<span class="font-display-currency-mobile text-display-currency-mobile md:text-display-currency text-on-surface">Rp 8.500.000</span>
+<span class="font-body-sm text-body-sm text-secondary flex items-center gap-1 bg-secondary-container px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">trending_up</span> +2.4%
+                        </span>
+</div>
+<div class="mt-4">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-surface-container-high text-on-surface-variant rounded-full text-[11px] font-bold">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+                            Updated weekly
+                        </span>
+</div>
+</div>
+<!-- Action Button -->
+<div class="mt-8 flex gap-4">
+<button class="flex-1 bg-primary hover:bg-primary-container text-on-primary font-bold py-4 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]">
+<span class="material-symbols-outlined">sync</span>
+                        Update Balance
+                    </button>
+</div>
+</div>
+</section>
+<!-- Stats Bento Row -->
+<section class="grid grid-cols-2 md:grid-cols-4 gap-gutter mt-stack-lg">
+<div class="bg-surface-container-low p-stack-md rounded-xl border border-outline-variant/50">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">INCOME</p>
+<p class="font-headline-md text-headline-md text-secondary">Rp 12.0M</p>
+</div>
+<div class="bg-surface-container-low p-stack-md rounded-xl border border-outline-variant/50">
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">EXPENSES</p>
+<p class="font-headline-md text-headline-md text-tertiary">Rp 3.5M</p>
+</div>
+<div class="col-span-2 hidden md:block bg-surface-container-low p-stack-md rounded-xl border border-outline-variant/50 relative overflow-hidden">
+<div class="flex justify-between items-end h-full">
+<div>
+<p class="font-label-caps text-label-caps text-on-surface-variant mb-1">MONTHLY TREND</p>
+<p class="font-headline-md text-headline-md text-on-surface">Stable</p>
+</div>
+<div class="flex gap-1 items-end h-12">
+<div class="w-2 bg-primary/20 rounded-t-sm h-6"></div>
+<div class="w-2 bg-primary/40 rounded-t-sm h-8"></div>
+<div class="w-2 bg-primary/60 rounded-t-sm h-5"></div>
+<div class="w-2 bg-primary rounded-t-sm h-10"></div>
+<div class="w-2 bg-primary/80 rounded-t-sm h-7"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Transactions List -->
+<section class="mt-stack-lg">
+<div class="flex justify-between items-center mb-stack-md">
+<h3 class="font-headline-md text-headline-md text-on-surface">Recent Transactions</h3>
+<button class="text-primary font-bold text-sm hover:underline">See All</button>
+</div>
+<!-- Search & Filter Bar -->
+<div class="flex gap-2 mb-stack-md overflow-x-auto pb-2 scrollbar-hide">
+<div class="relative flex-1 min-w-[200px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 rounded-xl border-outline-variant bg-surface-container-lowest focus:ring-primary focus:border-primary text-sm transition-all" placeholder="Search transactions..." type="text"/>
+</div>
+<button class="px-4 py-2.5 rounded-xl bg-surface-container-high text-on-surface-variant font-bold text-sm flex items-center gap-2 whitespace-nowrap">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                    Filter
+                </button>
+</div>
+<div class="space-y-stack-sm">
+<!-- Transaction Item 1 -->
+<div class="group flex items-center justify-between p-stack-md bg-surface-container-lowest hover:bg-surface-container-low rounded-xl transition-all duration-200 border border-transparent hover:border-outline-variant cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Indomaret Point</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Yesterday • Groceries</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-body-lg text-body-lg font-bold text-tertiary">-Rp 45.500</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant/60">COMPLETED</p>
+</div>
+</div>
+<!-- Transaction Item 2 -->
+<div class="group flex items-center justify-between p-stack-md bg-surface-container-lowest hover:bg-surface-container-low rounded-xl transition-all duration-200 border border-transparent hover:border-outline-variant cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Salary Deposit</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Oct 25 • Career</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-body-lg text-body-lg font-bold text-secondary">+Rp 15.000.000</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant/60">COMPLETED</p>
+</div>
+</div>
+<!-- Transaction Item 3 -->
+<div class="group flex items-center justify-between p-stack-md bg-surface-container-lowest hover:bg-surface-container-low rounded-xl transition-all duration-200 border border-transparent hover:border-outline-variant cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">electric_bolt</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">PLN Pasca Bayar</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Oct 24 • Utilities</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-body-lg text-body-lg font-bold text-tertiary">-Rp 1.200.000</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant/60">COMPLETED</p>
+</div>
+</div>
+<!-- Transaction Item 4 -->
+<div class="group flex items-center justify-between p-stack-md bg-surface-container-lowest hover:bg-surface-container-low rounded-xl transition-all duration-200 border border-transparent hover:border-outline-variant cursor-pointer">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+</div>
+<div>
+<p class="font-body-lg text-body-lg font-semibold text-on-surface">Gojek - Gofood</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Oct 23 • Dining</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-body-lg text-body-lg font-bold text-tertiary">-Rp 82.000</p>
+<p class="font-label-caps text-[10px] text-on-surface-variant/60">COMPLETED</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Insights Component -->
+<section class="mt-stack-lg mb-stack-lg">
+<div class="bg-primary/5 rounded-xl p-stack-md border border-primary/10 flex items-start gap-4">
+<div class="p-2 bg-primary rounded-lg text-on-primary">
+<span class="material-symbols-outlined">lightbulb</span>
+</div>
+<div>
+<p class="font-body-lg font-bold text-on-surface">Smart Insight</p>
+<p class="font-body-sm text-on-surface-variant mt-1">Your dining expenses in BCA Utama are 15% lower than last month. Great job staying on budget!</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom NavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-2 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-t border-outline-variant dark:border-outline shadow-lg rounded-t-xl md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant active:scale-95 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary relative after:content-[''] after:w-1 after:h-1 after:bg-primary after:rounded-full after:mt-1 active:scale-95 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Accounts</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary w-14 h-14 -mt-10 rounded-full shadow-lg active:scale-95 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined text-3xl">add</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant active:scale-95 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">pie_chart</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">Budgets</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-surface-variant active:scale-95 duration-200 transition-all" href="#">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-label-caps text-[10px] mt-1 uppercase">More</span>
+</a>
+</nav>
+<!-- Desktop Navigation Side Rail (Optional addition for full UI context) -->
+<div class="hidden md:flex fixed left-0 top-0 h-full w-20 flex-col items-center py-stack-lg bg-surface-container-low border-r border-outline-variant">
+<div class="text-primary font-extrabold text-xl mb-12">FH</div>
+<div class="flex flex-col gap-10">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">home</span>
+<span class="material-symbols-outlined text-primary cursor-pointer" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">pie_chart</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+</div>
+</div>
+<script>
+        // Micro-interaction for balance update
+        document.querySelector('button').addEventListener('click', function() {
+            const btn = this;
+            const icon = btn.querySelector('.material-symbols-outlined');
+            
+            icon.classList.add('animate-spin');
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">sync</span> Updating...`;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+            
+            setTimeout(() => {
+                icon.classList.remove('animate-spin');
+                btn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Updated`;
+                btn.classList.replace('bg-primary', 'bg-secondary');
+                
+                setTimeout(() => {
+                    btn.innerHTML = `<span class="material-symbols-outlined">sync</span> Update Balance`;
+                    btn.classList.replace('bg-secondary', 'bg-primary');
+                    btn.classList.remove('opacity-80', 'cursor-not-allowed');
+                }, 2000);
+            }, 1500);
+        });
+
+        // Simple scroll effect for Header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-sm', 'bg-surface/95', 'backdrop-blur-md');
+            } else {
+                header.classList.remove('shadow-sm', 'bg-surface/95', 'backdrop-blur-md');
+            }
+        });
+    </script>
+</body></html>

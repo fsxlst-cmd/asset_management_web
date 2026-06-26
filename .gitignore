@@ -1,0 +1,15 @@
+node_modules
+.nuxt
+.output
+.data
+dist
+*.log
+.env
+.DS_Store
+
+# Local SQLite database & backups (financial data — never commit)
+/data/
+*.db
+*.db-journal
+*.db-wal
+*.sqlite
