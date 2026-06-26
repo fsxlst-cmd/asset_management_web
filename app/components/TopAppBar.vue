@@ -1,11 +1,11 @@
 <script setup lang="ts">
-/** Sticky top bar: optional back button, title, optional settings affordance. */
+/** Sticky top bar: optional back button or avatar, plus title. */
 withDefaults(defineProps<{ title?: string; back?: boolean }>(), { title: 'Finance Hub', back: false })
 </script>
 
 <template>
   <header
-    class="w-full top-0 sticky z-40 bg-surface flex justify-between items-center px-container-padding-mobile py-stack-md"
+    class="w-full top-0 sticky z-40 bg-surface flex items-center px-container-padding-mobile py-stack-md"
   >
     <div class="flex items-center gap-3">
       <button v-if="back" class="text-primary active:opacity-70" aria-label="Back" @click="$router.back()">
@@ -19,8 +19,5 @@ withDefaults(defineProps<{ title?: string; back?: boolean }>(), { title: 'Financ
       </div>
       <h1 class="font-headline-md text-headline-md font-bold text-primary">{{ title }}</h1>
     </div>
-    <button class="p-2 hover:bg-surface-variant rounded-full transition-colors text-primary active:opacity-70" aria-label="Settings">
-      <AppIcon name="settings" />
-    </button>
   </header>
 </template>
