@@ -98,3 +98,4 @@ data integrity and input safety rather than auth machinery:
 > **Note:** `npm audit` reports findings in `drizzle-kit`'s dev-only `esbuild`
 > dependency. These affect the migration tooling, not the runtime bundle, and are
 > acceptable for a local app. Do not `npm audit fix --force` (it breaks drizzle-kit).
+# asset_management_web
