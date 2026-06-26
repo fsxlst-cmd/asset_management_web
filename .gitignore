@@ -1,11 +1,26 @@
+# Dependencies
 node_modules
+
+# Nuxt / build output
 .nuxt
 .output
 .data
 dist
+
+# Logs
 *.log
+
+# Environment variables (secrets)
 .env
+.env.*
+!.env.example
+
+# OS / editor cruft
 .DS_Store
+Thumbs.db
+
+# Test coverage
+/coverage/
 
 # Local SQLite database & backups (financial data — never commit)
 /data/
@@ -13,3 +28,12 @@ dist
 *.db-journal
 *.db-wal
 *.sqlite
+
+# CodeGraph local index (generated; large, regenerable)
+.codegraph/codegraph.db
+
+# Local scratch (screenshots, throwaway notes)
+/issue/
+
+# Local-only Claude Code settings (machine-specific)
+.claude/settings.local.json
