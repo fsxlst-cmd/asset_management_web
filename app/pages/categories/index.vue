@@ -10,7 +10,9 @@ const kindOptions = [
 ]
 const showArchived = ref(false)
 
-// Reload whenever the kind or the archived toggle changes.
+// Always fetch the full list (including archived) and split client-side, so the
+// "Show archived" toggle is purely a display switch with no extra request. Only a
+// kind change needs a refetch.
 const { data, refresh, pending } = await useAsyncData(
   'categories',
   () => api.categories(kind.value, true),

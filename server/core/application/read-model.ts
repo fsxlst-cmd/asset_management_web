@@ -68,13 +68,18 @@ export class ReadModel {
     return { ...base, sourceAccountId: entry.sourceAccountId, destinationAccountId: entry.destinationAccountId }
   }
 
-  /** id → name for every category of both kinds (archived included, so old rows still render). */
-  private async categoryNames(): Promise<Map<string, string>> {
-    const [income, expense] = await Promise.all([
-      this.repos.categories.list('income', { includeArchived: true }),
-      this.repos.categories.list('expense', { includeArchived: true }),
-    ])
-    return new Map([...income, ...expense].map((c) => [c.id, c.name]))
+  /**
+   * id → name for categories (archived included, so old rows still render). Pass a
+   * single kind to skip fetching the other list when only one is needed (e.g. a
+   * budget's entries are all expenses); omit it to resolve both income and expense.
+   */
+  private async categoryNames(kind?: 'income' | 'expense'): Promise<Map<string, string>> {
+    const lists = await Promise.all(
+      (kind ? [kind] : (['income', 'expense'] as const)).map((k) =>
+        this.repos.categories.list(k, { includeArchived: true }),
+      ),
+    )
+    return new Map(lists.flat().map((c) => [c.id, c.name]))
   }
 
   private async accountDto(account: Account, allEntries: LedgerEntry[]): Promise<AccountDto> {
@@ -208,7 +213,8 @@ export class ReadModel {
     if (!envelope) throw new NotFoundError(`Budget ${envelopeId} not found`)
     const entries = await this.repos.ledger.list({ envelopeId })
     const expenses = entries.filter((e): e is ExpenseEntry => e.type === 'expense')
-    const categoryNames = await this.categoryNames()
+    // Entries here are all expenses (filtered by envelopeId), so only expense categories are needed.
+    const categoryNames = await this.categoryNames('expense')
     return {
       envelope: await this.envelopeDto(envelope, expenses),
       transactions: entries.map((e) => this.entryToDto(e, envelope.name, categoryNames)),
