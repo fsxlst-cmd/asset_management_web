@@ -13,8 +13,12 @@ const signedAmount = computed(() => (props.tx.type === 'expense' ? -props.tx.amo
 const isIncome = computed(() => props.tx.type === 'income')
 
 const subtitle = computed(() => {
-  if (props.tx.type === 'expense') return props.tx.envelopeName ?? 'Expense'
-  if (props.tx.type === 'income') return 'Income'
+  if (props.tx.type === 'expense') {
+    // Category is the classification; the budget envelope is shown alongside when both exist.
+    const parts = [props.tx.categoryName, props.tx.envelopeName].filter(Boolean)
+    return parts.length ? parts.join(' · ') : 'Expense'
+  }
+  if (props.tx.type === 'income') return props.tx.categoryName ?? 'Income'
   return 'Transfer'
 })
 const when = computed(() => new Date(props.tx.date).toLocaleDateString('id-ID', { day: '2-digit', month: 'short' }))

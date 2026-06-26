@@ -1,6 +1,8 @@
 import type {
   AccountsViewDto,
   AccountDetailDto,
+  CategoryDto,
+  CategoryKind,
   CrossCheckDto,
   DashboardDto,
   EnvelopeDto,
@@ -8,6 +10,7 @@ import type {
 } from '@shared/dto'
 import type {
   CreateAccountBody,
+  CreateCategoryBody,
   CreateEnvelopeBody,
   LogExpenseBody,
   LogIncomeBody,
@@ -33,6 +36,14 @@ export function useApi() {
     deleteBudget: (id: string) => $fetch<{ ok: true }>(`/api/budgets/${id}`, { method: 'DELETE' }),
     editAccrual: (id: string, body: { amount: number; period: 'day' | 'week' | 'month' }) =>
       $fetch(`/api/budgets/${id}/accrual`, { method: 'PATCH', body }),
+
+    categories: (kind: CategoryKind, includeArchived = false) =>
+      $fetch<CategoryDto[]>('/api/categories', { query: { kind, includeArchived: String(includeArchived) } }),
+    createCategory: (body: CreateCategoryBody) => $fetch<{ id: string }>('/api/categories', { method: 'POST', body }),
+    renameCategory: (id: string, name: string) =>
+      $fetch<{ ok: true }>(`/api/categories/${id}`, { method: 'PATCH', body: { name } }),
+    archiveCategory: (id: string) => $fetch<{ ok: true }>(`/api/categories/${id}`, { method: 'DELETE' }),
+    restoreCategory: (id: string) => $fetch<{ ok: true }>(`/api/categories/${id}/restore`, { method: 'POST' }),
 
     logExpense: (body: LogExpenseBody) => $fetch<{ id: string }>('/api/transactions/expense', { method: 'POST', body }),
     logIncome: (body: LogIncomeBody) => $fetch<{ id: string }>('/api/transactions/income', { method: 'POST', body }),

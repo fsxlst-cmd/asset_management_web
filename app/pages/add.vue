@@ -5,11 +5,15 @@ const router = useRouter()
 // Load pickers' data.
 const { data: accountsView } = await useAsyncData('add-accounts', () => api.accounts())
 const { data: budgets } = await useAsyncData('add-budgets', () => api.budgets())
+const { data: expenseCategories } = await useAsyncData('add-expense-categories', () => api.categories('expense'))
+const { data: incomeCategories } = await useAsyncData('add-income-categories', () => api.categories('income'))
 
 const accountOptions = computed(() =>
   (accountsView.value?.groups ?? []).flatMap((g) => g.accounts).map((a) => ({ value: a.id, label: a.name })),
 )
 const budgetOptions = computed(() => (budgets.value ?? []).map((b) => ({ value: b.id, label: b.name })))
+const expenseCategoryOptions = computed(() => (expenseCategories.value ?? []).map((c) => ({ value: c.id, label: c.name })))
+const incomeCategoryOptions = computed(() => (incomeCategories.value ?? []).map((c) => ({ value: c.id, label: c.name })))
 
 const mode = ref<'expense' | 'income' | 'transfer'>('expense')
 const modeOptions = [
@@ -21,18 +25,23 @@ const modeOptions = [
 const amount = ref(0)
 const note = ref('')
 const envelopeId = ref('')
+const expenseCategoryId = ref('')
+const incomeCategoryId = ref('')
 const sourceAccountId = ref('')
 const destinationAccountId = ref('')
 const error = ref('')
 const saving = ref(false)
 
+// Smart defaults: the budget envelope pre-fills so expense entry stays one
+// deliberate tap (the category). Categories must be chosen explicitly.
 watchEffect(() => {
   if (!envelopeId.value && budgetOptions.value.length) envelopeId.value = budgetOptions.value[0]!.value
 })
 
 const canSave = computed(() => {
   if (amount.value <= 0) return false
-  if (mode.value === 'expense') return !!envelopeId.value
+  if (mode.value === 'expense') return !!envelopeId.value && !!expenseCategoryId.value
+  if (mode.value === 'income') return !!incomeCategoryId.value
   if (mode.value === 'transfer') {
     return !!sourceAccountId.value && !!destinationAccountId.value && sourceAccountId.value !== destinationAccountId.value
   }
@@ -47,12 +56,14 @@ async function save() {
       await api.logExpense({
         amount: amount.value,
         envelopeId: envelopeId.value,
+        categoryId: expenseCategoryId.value,
         sourceAccountId: sourceAccountId.value || undefined,
         note: note.value || undefined,
       })
     } else if (mode.value === 'income') {
       await api.logIncome({
         amount: amount.value,
+        categoryId: incomeCategoryId.value,
         destinationAccountId: destinationAccountId.value || undefined,
         note: note.value || undefined,
       })
@@ -93,7 +104,13 @@ async function save() {
             <AppIcon name="savings" />
             <span class="font-body-sm">No budgets yet — create a recurring budget first, then log expenses against it.</span>
           </NuxtLink>
-          <PickerField v-else v-model="envelopeId" label="BUDGET CATEGORY" :options="budgetOptions" icon="savings" />
+          <PickerField v-else v-model="envelopeId" label="BUDGET" :options="budgetOptions" icon="savings" />
+          <CategoryChips
+            v-if="budgetOptions.length"
+            v-model="expenseCategoryId"
+            label="CATEGORY"
+            :options="expenseCategoryOptions"
+          />
           <PickerField
             v-if="budgetOptions.length"
             v-model="sourceAccountId"
@@ -104,8 +121,9 @@ async function save() {
           />
         </template>
 
-        <!-- Income: optional destination -->
+        <!-- Income: required category + optional destination -->
         <template v-else-if="mode === 'income'">
+          <CategoryChips v-model="incomeCategoryId" label="CATEGORY" :options="incomeCategoryOptions" />
           <PickerField
             v-model="destinationAccountId"
             label="DEPOSITED TO ACCOUNT (OPTIONAL)"

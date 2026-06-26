@@ -42,6 +42,17 @@ export const envelopes = sqliteTable('envelopes', {
   accrualBaseline: integer('accrual_baseline'), // frozen accruals before anchor (rate changes)
 })
 
+/**
+ * User-managed income/expense classification labels. Two separate lists keyed by
+ * `kind`. Nullable `archived_at` (epoch ms) implements soft-delete: set ⇒ archived.
+ */
+export const categories = sqliteTable('categories', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  kind: text('kind').notNull(), // 'income' | 'expense'
+  archivedAt: integer('archived_at'), // epoch ms; null ⇒ active
+})
+
 export const ledgerEntries = sqliteTable('ledger_entries', {
   id: text('id').primaryKey(),
   type: text('type').notNull(), // 'expense' | 'income' | 'transfer'
@@ -53,6 +64,9 @@ export const ledgerEntries = sqliteTable('ledger_entries', {
   sourceAccountId: text('source_account_id').references(() => accounts.id),
   // income / transfer
   destinationAccountId: text('destination_account_id').references(() => accounts.id),
+  // income / expense classification (required for those types, enforced in the use-case;
+  // nullable column mirrors how envelope_id is modelled, and transfers leave it null)
+  categoryId: text('category_id').references(() => categories.id),
 })
 
 export const snapshots = sqliteTable('snapshots', {

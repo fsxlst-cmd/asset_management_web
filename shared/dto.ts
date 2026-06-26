@@ -7,6 +7,7 @@
 
 export type AccountKind = 'bank' | 'e-wallet' | 'cash' | 'prepaid-card'
 export type EntryType = 'expense' | 'income' | 'transfer'
+export type CategoryKind = 'income' | 'expense'
 export type AccrualPeriod = 'day' | 'week' | 'month'
 export type AccuracyBadge = 'live-tracked' | 'updated-weekly'
 
@@ -25,6 +26,14 @@ export interface AccountDto {
   lastSnapshotAt: string | null
 }
 
+export interface CategoryDto {
+  id: string
+  name: string
+  kind: CategoryKind
+  /** True when soft-deleted (archived) — hidden from pickers, kept on old records. */
+  archived: boolean
+}
+
 export interface TransactionDto {
   id: string
   type: EntryType
@@ -33,6 +42,9 @@ export interface TransactionDto {
   note?: string
   envelopeId?: string
   envelopeName?: string
+  /** Income/expense classification (transfers have none). */
+  categoryId?: string
+  categoryName?: string
   sourceAccountId?: string
   destinationAccountId?: string
 }

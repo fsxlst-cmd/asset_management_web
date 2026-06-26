@@ -4,13 +4,15 @@ import type {
   AccountKind,
   Asset,
   AssetKind,
+  Category,
+  CategoryKind,
   Envelope,
   Holding,
   LedgerEntry,
   Snapshot,
   AccrualPeriod,
 } from '@core/domain/entities'
-import type { accounts, assets, envelopes, holdings, ledgerEntries, snapshots } from './schema'
+import type { accounts, assets, categories, envelopes, holdings, ledgerEntries, snapshots } from './schema'
 
 /**
  * Translate between persisted rows (integers, epoch ms) and domain entities
@@ -22,6 +24,7 @@ type AssetRow = typeof assets.$inferSelect
 type AccountRow = typeof accounts.$inferSelect
 type HoldingRow = typeof holdings.$inferSelect
 type EnvelopeRow = typeof envelopes.$inferSelect
+type CategoryRow = typeof categories.$inferSelect
 type LedgerRow = typeof ledgerEntries.$inferSelect
 type SnapshotRow = typeof snapshots.$inferSelect
 
@@ -53,13 +56,22 @@ export function toEnvelope(r: EnvelopeRow): Envelope {
   }
 }
 
+export function toCategory(r: CategoryRow): Category {
+  return {
+    id: r.id,
+    name: r.name,
+    kind: r.kind as CategoryKind,
+    archivedAt: r.archivedAt != null ? new Date(r.archivedAt) : undefined,
+  }
+}
+
 export function toLedgerEntry(r: LedgerRow): LedgerEntry {
   const base = { id: r.id, amount: Money.fromInt(r.amount), date: new Date(r.date), note: r.note ?? undefined }
   switch (r.type) {
     case 'expense':
-      return { ...base, type: 'expense', envelopeId: r.envelopeId!, sourceAccountId: r.sourceAccountId ?? undefined }
+      return { ...base, type: 'expense', envelopeId: r.envelopeId!, categoryId: r.categoryId!, sourceAccountId: r.sourceAccountId ?? undefined }
     case 'income':
-      return { ...base, type: 'income', destinationAccountId: r.destinationAccountId ?? undefined }
+      return { ...base, type: 'income', categoryId: r.categoryId!, destinationAccountId: r.destinationAccountId ?? undefined }
     case 'transfer':
       return { ...base, type: 'transfer', sourceAccountId: r.sourceAccountId!, destinationAccountId: r.destinationAccountId! }
     default:
@@ -84,5 +96,6 @@ export function fromLedgerEntry(e: LedgerEntry): LedgerRow {
     sourceAccountId: e.type === 'expense' ? (e.sourceAccountId ?? null) : e.type === 'transfer' ? e.sourceAccountId : null,
     destinationAccountId:
       e.type === 'income' ? (e.destinationAccountId ?? null) : e.type === 'transfer' ? e.destinationAccountId : null,
+    categoryId: e.type === 'transfer' ? null : e.categoryId,
   }
 }

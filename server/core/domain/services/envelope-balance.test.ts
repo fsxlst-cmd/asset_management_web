@@ -13,7 +13,7 @@ const daily: Envelope = {
 }
 
 function expense(id: string, amount: number, date: string): ExpenseEntry {
-  return { id, type: 'expense', amount: Money.fromRupiah(amount), date: d(date), envelopeId: 'daily' }
+  return { id, type: 'expense', amount: Money.fromRupiah(amount), date: d(date), envelopeId: 'daily', categoryId: 'food' }
 }
 
 describe('envelope balance (accrued − assigned expenses)', () => {

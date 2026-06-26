@@ -38,12 +38,20 @@ async function create() {
           <h1 class="font-headline-lg text-headline-lg mb-1">Budget Envelopes</h1>
           <p class="text-on-surface-variant font-body-lg">Recurring budgets you set up and control.</p>
         </div>
-        <button
-          class="bg-primary text-on-primary rounded-full px-4 py-2 font-label-caps text-label-caps flex items-center gap-1 active:scale-95 shrink-0"
-          @click="showCreate = !showCreate"
-        >
-          <AppIcon name="add" :size="18" /> New
-        </button>
+        <div class="flex items-center gap-2 shrink-0">
+          <NuxtLink
+            to="/categories"
+            class="bg-surface-container text-on-surface rounded-full px-4 py-2 font-label-caps text-label-caps flex items-center gap-1 active:scale-95"
+          >
+            <AppIcon name="sell" :size="18" /> Categories
+          </NuxtLink>
+          <button
+            class="bg-primary text-on-primary rounded-full px-4 py-2 font-label-caps text-label-caps flex items-center gap-1 active:scale-95"
+            @click="showCreate = !showCreate"
+          >
+            <AppIcon name="add" :size="18" /> New
+          </button>
+        </div>
       </header>
 
       <!-- Create form -->

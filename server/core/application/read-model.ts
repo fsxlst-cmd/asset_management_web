@@ -39,7 +39,7 @@ export class ReadModel {
     private readonly clock: Clock,
   ) {}
 
-  private entryToDto(entry: LedgerEntry, envelopeName?: string): TransactionDto {
+  private entryToDto(entry: LedgerEntry, envelopeName?: string, categoryNames?: Map<string, string>): TransactionDto {
     const base: TransactionDto = {
       id: entry.id,
       type: entry.type,
@@ -48,12 +48,33 @@ export class ReadModel {
       note: entry.note,
     }
     if (entry.type === 'expense') {
-      return { ...base, envelopeId: entry.envelopeId, envelopeName, sourceAccountId: entry.sourceAccountId }
+      return {
+        ...base,
+        envelopeId: entry.envelopeId,
+        envelopeName,
+        categoryId: entry.categoryId,
+        categoryName: categoryNames?.get(entry.categoryId),
+        sourceAccountId: entry.sourceAccountId,
+      }
     }
     if (entry.type === 'income') {
-      return { ...base, destinationAccountId: entry.destinationAccountId }
+      return {
+        ...base,
+        categoryId: entry.categoryId,
+        categoryName: categoryNames?.get(entry.categoryId),
+        destinationAccountId: entry.destinationAccountId,
+      }
     }
     return { ...base, sourceAccountId: entry.sourceAccountId, destinationAccountId: entry.destinationAccountId }
+  }
+
+  /** id → name for every category of both kinds (archived included, so old rows still render). */
+  private async categoryNames(): Promise<Map<string, string>> {
+    const [income, expense] = await Promise.all([
+      this.repos.categories.list('income', { includeArchived: true }),
+      this.repos.categories.list('expense', { includeArchived: true }),
+    ])
+    return new Map([...income, ...expense].map((c) => [c.id, c.name]))
   }
 
   private async accountDto(account: Account, allEntries: LedgerEntry[]): Promise<AccountDto> {
@@ -123,9 +144,10 @@ export class ReadModel {
     }
 
     const envelopesById = new Map(envelopes.map((e) => [e.id, e]))
+    const categoryNames = await this.categoryNames()
     const recent = (await this.repos.ledger.list()).slice(0, 5)
     const recentTransactions = recent.map((e) =>
-      this.entryToDto(e, e.type === 'expense' ? envelopesById.get(e.envelopeId)?.name : undefined),
+      this.entryToDto(e, e.type === 'expense' ? envelopesById.get(e.envelopeId)?.name : undefined, categoryNames),
     )
 
     return { netWorth, lastSnapshotAt, accounts, primaryEnvelope, recentTransactions }
@@ -162,8 +184,9 @@ export class ReadModel {
       .reduce((s, e) => s + Math.abs(entryEffect(e, accountId).toInt()), 0)
 
     const envelopes = new Map((await this.repos.envelopes.list()).map((e) => [e.id, e.name]))
+    const categoryNames = await this.categoryNames()
     const transactions = tagged.map((e) =>
-      this.entryToDto(e, e.type === 'expense' ? envelopes.get(e.envelopeId) : undefined),
+      this.entryToDto(e, e.type === 'expense' ? envelopes.get(e.envelopeId) : undefined, categoryNames),
     )
     return { account: dto, income, expense, transactions }
   }
@@ -185,9 +208,10 @@ export class ReadModel {
     if (!envelope) throw new NotFoundError(`Budget ${envelopeId} not found`)
     const entries = await this.repos.ledger.list({ envelopeId })
     const expenses = entries.filter((e): e is ExpenseEntry => e.type === 'expense')
+    const categoryNames = await this.categoryNames()
     return {
       envelope: await this.envelopeDto(envelope, expenses),
-      transactions: entries.map((e) => this.entryToDto(e, envelope.name)),
+      transactions: entries.map((e) => this.entryToDto(e, envelope.name, categoryNames)),
     }
   }
 }

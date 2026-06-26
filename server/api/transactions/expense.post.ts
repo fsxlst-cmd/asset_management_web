@@ -8,6 +8,7 @@ export default defineEventHandler(async (event) => {
     useContainer().logExpense.execute({
       amount: body.amount,
       envelopeId: body.envelopeId,
+      categoryId: body.categoryId,
       sourceAccountId: body.sourceAccountId,
       date: body.date ? new Date(body.date) : undefined,
       note: body.note,
