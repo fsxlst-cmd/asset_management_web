@@ -1,0 +1,12 @@
+node_modules
+.nuxt
+.output
+data
+.env
+*.local
+.git
+design
+openspec
+issue
+spending-report-flutter-context.md
+ui-brief-google-stitch.md
