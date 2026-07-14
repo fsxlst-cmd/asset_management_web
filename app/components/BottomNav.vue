@@ -1,16 +1,19 @@
 <script setup lang="ts">
 /**
  * Glass bottom navigation: Home · Accounts · + · Budgets · More.
- * Active state derives from the current route, with the design's active-dot indicator.
+ * "More" is a hub for secondary destinations (Insights, Reconcile, Categories), so the
+ * primary bar stays at five slots. Active state derives from the current route.
  */
 const route = useRoute()
+
+const moreRoutes = ['/more', '/insights', '/reconcile', '/categories']
 
 const items = [
   { to: '/', icon: 'home', label: 'Home', match: (p: string) => p === '/' },
   { to: '/accounts', icon: 'account_balance', label: 'Accounts', match: (p: string) => p.startsWith('/accounts') },
   { to: '/add', icon: 'add_circle', label: 'Add', center: true, match: (p: string) => p === '/add' },
   { to: '/budgets', icon: 'pie_chart', label: 'Budgets', match: (p: string) => p.startsWith('/budgets') },
-  { to: '/reconcile', icon: 'menu', label: 'More', match: (p: string) => p.startsWith('/reconcile') },
+  { to: '/more', icon: 'menu', label: 'More', match: (p: string) => moreRoutes.some((r) => p.startsWith(r)) },
 ] as const
 
 const isActive = (item: (typeof items)[number]) => item.match(route.path)

@@ -29,7 +29,7 @@ function localDayIndex(d: Date): number {
 }
 
 /** WIB calendar parts of `d`, for month arithmetic. */
-function localParts(d: Date): { year: number; month: number; day: number } {
+export function localParts(d: Date): { year: number; month: number; day: number } {
   const shifted = new Date(d.getTime() + BASE_TZ_OFFSET_MS)
   return { year: shifted.getUTCFullYear(), month: shifted.getUTCMonth(), day: shifted.getUTCDate() }
 }

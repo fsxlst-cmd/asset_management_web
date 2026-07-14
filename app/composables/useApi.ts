@@ -7,6 +7,7 @@ import type {
   DashboardDto,
   EnvelopeDto,
   EnvelopeDetailDto,
+  SpendingReportDto,
 } from '@shared/dto'
 import type {
   CreateAccountBody,
@@ -48,6 +49,9 @@ export function useApi() {
     logExpense: (body: LogExpenseBody) => $fetch<{ id: string }>('/api/transactions/expense', { method: 'POST', body }),
     logIncome: (body: LogIncomeBody) => $fetch<{ id: string }>('/api/transactions/income', { method: 'POST', body }),
     transfer: (body: RecordTransferBody) => $fetch<{ id: string }>('/api/transactions/transfer', { method: 'POST', body }),
+
+    spendingReport: (month?: string) =>
+      $fetch<SpendingReportDto>('/api/reports/spending', { query: month ? { month } : {} }),
 
     reconcile: (body: ReconciliationBody) => $fetch<{ ok: true }>('/api/reconciliation', { method: 'POST', body }),
     crossCheck: (periodStart: string, periodEnd: string) =>

@@ -80,6 +80,24 @@ export const listCategoriesQuerySchema = z.object({
     .transform((v) => v === 'true'),
 })
 
+/**
+ * Spending-report month selector. Accepts `YYYY-MM` (e.g. "2026-06") and parses it
+ * into `{ year, month }` with month in 1–12. Rejects malformed strings and out-of-range
+ * months. Optional at the route boundary — absent means "current WIB month".
+ */
+export const monthParam = z
+  .string()
+  .regex(/^\d{4}-\d{2}$/, 'Expected YYYY-MM')
+  .transform((s) => {
+    const [year, month] = s.split('-').map(Number)
+    return { year: year!, month: month! }
+  })
+  .refine(({ month }) => month >= 1 && month <= 12, 'Month must be 01–12')
+
+export const spendingReportQuerySchema = z.object({
+  month: monthParam.optional(),
+})
+
 export const reconciliationSchema = z.object({
   balances: z
     .array(z.object({ holdingId: z.string().min(1), value: rupiah }))
@@ -100,3 +118,4 @@ export type ReconciliationBody = z.infer<typeof reconciliationSchema>
 export type CreateEnvelopeBody = z.infer<typeof createEnvelopeSchema>
 export type CreateCategoryBody = z.infer<typeof createCategorySchema>
 export type RenameCategoryBody = z.infer<typeof renameCategorySchema>
+export type YearMonthParam = z.infer<typeof monthParam>

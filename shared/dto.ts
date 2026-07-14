@@ -89,6 +89,49 @@ export interface EnvelopeDetailDto {
   transactions: TransactionDto[]
 }
 
+/** How a category's spend moved vs last month — drives which delta field the UI shows. */
+export type SpendingDeltaKind = 'percent' | 'absolute' | 'new'
+
+export interface SpendingCategoryRowDto {
+  categoryId: string
+  categoryName: string
+  /** This month's total for the category, in rupiah. */
+  amount: number
+  /** Share of the month's total expense, 0–1. */
+  share: number
+  /** Same as `amount`; named for symmetry with `lastMonth` in delta logic. */
+  thisMonth: number
+  /** The category's total in the previous WIB month, in rupiah (0 if it had none). */
+  lastMonth: number
+  deltaKind: SpendingDeltaKind
+  /** Set when deltaKind === 'percent': fractional change vs last month (0.45 = +45%). */
+  deltaPercent?: number
+  /** Set when deltaKind === 'absolute': signed rupiah change vs a tiny last-month base. */
+  deltaAbsolute?: number
+}
+
+/** A category that had spend last month but none this month. */
+export interface SpendingQuietRowDto {
+  categoryId: string
+  categoryName: string
+  lastMonth: number
+}
+
+export interface SpendingReportDto {
+  /** The reported month as `YYYY-MM` (WIB). */
+  month: string
+  /** Total expense this month, in rupiah. */
+  total: number
+  /** Total expense in the previous WIB month, in rupiah. */
+  totalLastMonth: number
+  /** Fractional change of the month total vs last month; omitted when last month was zero. */
+  totalDeltaPercent?: number
+  /** Categories with spend this month, largest first. */
+  rows: SpendingCategoryRowDto[]
+  /** Categories that went quiet (spent last month, nothing this month). */
+  quiet: SpendingQuietRowDto[]
+}
+
 export interface CrossCheckDto {
   netWorthChange: number
   loggedIncome: number
